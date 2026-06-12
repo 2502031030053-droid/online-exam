@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeQuiz - Online Exam Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #475569;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: var(--text-muted);
+        }
+
+        .score-badge {
+            background: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .welcome-section p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Registration Form */
+        .auth-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            max-width: 400px;
+            margin: 0 auto 3rem;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            color: var(--text);
+            font-size: 1rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-input);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* Category Grid */
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--card-color, var(--primary));
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--card-color, var(--primary));
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .category-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--card-color, var(--primary));
+            color: white;
+        }
+
+        .category-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .difficulty {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .difficulty.easy { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .difficulty.medium { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .difficulty.hard { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        /* Quiz Section */
+        .quiz-container {
+            display: none;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quiz-header {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .quiz-info h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .quiz-info span {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .quiz-stats {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+            padding: 0.5rem 1rem;
+            background: var(--bg-input);
+            border-radius: 0.5rem;
+        }
+
+        .timer.warning { color: var(--warning); }
+        .timer.danger { color: var(--danger); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-input);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #a855f7);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Question Card */
+        .question-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .question-text code {
+            background: var(--bg-input);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .code-block {
+            background: #0d1117;
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--bg-input);
+            border: 2px solid transparent;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option:hover {
+            background: var(--border);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .option-letter {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-card);
+            border-radius: 50%;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .option.selected .option-letter {
+            background: var(--primary);
+            color: white;
+        }
+
+        .option.correct .option-letter {
+            background: var(--success);
+            color: white;
+        }
+
+        .option.incorrect .option-letter {
+            background: var(--danger);
+            color: white;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        .option-text code {
+            background: var(--bg-card);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: 'Fira Code', 'Courier New', monospace;
+        }
+
+        /* Explanation */
+        .explanation {
+            margin-top: 1.5rem;
+            padding: 1rem 1.25rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 0.5rem 0.5rem 0;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .explanation h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Navigation */
+        .quiz-navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        /* Results Section */
+        .results-container {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .results-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .results-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        .results-icon.excellent { background: rgba(16, 185, 129, 0.2); }
+        .results-icon.good { background: rgba(99, 102, 241, 0.2); }
+        .results-icon.needs-work { background: rgba(245, 158, 11, 0.2); }
+        .results-icon.poor { background: rgba(239, 68, 68, 0.2); }
+
+        .results-card h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .results-card .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle .bg {
+            fill: none;
+            stroke: var(--bg-input);
+            stroke-width: 10;
+        }
+
+        .score-circle .progress {
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 408;
+            stroke-dashoffset: 408;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .score-circle .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .results-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-stat {
+            padding: 1rem;
+            background: var(--bg-input);
+            border-radius: 0.75rem;
+        }
+
+        .result-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .result-stat-value.correct { color: var(--success); }
+        .result-stat-value.incorrect { color: var(--danger); }
+        .result-stat-value.time { color: var(--primary); }
+
+        .result-stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .leaderboard h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .leaderboard-list {
+            list-style: none;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .leaderboard-item:nth-child(1) { background: rgba(255, 215, 0, 0.1); }
+        .leaderboard-item:nth-child(2) { background: rgba(192, 192, 192, 0.1); }
+        .leaderboard-item:nth-child(3) { background: rgba(205, 127, 50, 0.1); }
+
+        .rank {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .rank.gold { background: gold; color: #000; }
+        .rank.silver { background: silver; color: #000; }
+        .rank.bronze { background: #cd7f32; color: #000; }
+        .rank.normal { background: var(--bg-input); }
+
+        .leaderboard-name {
+            flex: 1;
+        }
+
+        .leaderboard-score {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        /* Hidden class */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .welcome-section h1 {
+                font-size: 1.75rem;
+            }
+
+            .quiz-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .quiz-stats {
+                justify-content: center;
+            }
+
+            .results-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .quiz-navigation {
+                flex-direction: column;
+            }
+
+            .nav-buttons {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                CodeQuiz
+            </div>
+            <div class="user-info" id="userInfo" style="display: none;">
+                <span class="user-name">Welcome, <strong id="displayName"></strong></span>
+                <span class="score-badge">🏆 <span id="totalScore">0</span> pts</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Welcome & Auth Section -->
+        <div id="authSection">
+            <section class="welcome-section">
+                <h1>Master Your Coding Skills</h1>
+                <p>Test your knowledge in HTML, CSS, JavaScript, Python, and more. Track your progress and compete with others.</p>
+            </section>
+
+            <div class="auth-card">
+                <h2>Get Started</h2>
+                <form id="authForm">
+                    <div class="form-group">
+                        <label for="username">Your Name</label>
+                        <input type="text" id="username" placeholder="Enter your name" required minlength="2" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email (optional)</label>
+                        <input type="email" id="email" placeholder="your@email.com">
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        Start Learning →
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categoriesSection" class="hidden">
+            <h2 class="section-title">📚 Choose a Topic</h2>
+            <div class="category-grid" id="categoryGrid"></div>
+
+            <div class="leaderboard">
+                <h3>🏆 Top Performers</h3>
+                <ul class="leaderboard-list" id="leaderboardList"></ul>
+            </div>
+        </div>
+
+        <!-- Quiz Section -->
+        <div class="quiz-container" id="quizSection">
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <h2 id="quizTitle">HTML Basics</h2>
+                    <span id="quizSubtitle">10 Questions • Medium</span>
+                </div>
+                <div class="quiz-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">Correct</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="incorrectCount">0</div>
+                        <div class="stat-label">Wrong</div>
+                    </div>
+                </div>
+                <div class="timer" id="timer">10:00</div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Question <span id="currentQ">1</span> of <span id="totalQ">10</span></span>
+                    <span id="progressPercent">0%</span>
+                </div>
+            </div>
+
+            <div class="question-card" id="questionCard">
+                <span class="question-number" id="questionNumber">Question 1</span>
+                <div class="question-text" id="questionText"></div>
+                <div class="code-block hidden" id="codeBlock"></div>
+                <div class="options-list" id="optionsList"></div>
+                <div class="explanation" id="explanation">
+                    <h4>💡 Explanation</h4>
+                    <p id="explanationText"></p>
+                </div>
+            </div>
+
+            <div class="quiz-navigation">
+                <button class="btn btn-secondary" id="quitBtn">✕ Quit</button>
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" id="prevBtn" disabled>← Previous</button>
+                    <button class="btn btn-primary" id="nextBtn">Next →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="resultsSection">
+            <div class="results-card">
+                <div class="results-icon" id="resultsIcon">🎉</div>
+                <h2 id="resultsTitle">Great Job!</h2>
+                <p class="subtitle" id="resultsSubtitle">You've completed the quiz</p>
+
+                <div class="score-circle">
+                    <svg width="150" height="150" viewBox="0 0 150 150">
+                        <circle class="bg" cx="75" cy="75" r="65"/>
+                        <circle class="progress" id="scoreProgress" cx="75" cy="75" r="65"/>
+                    </svg>
+                    <div class="score-text" id="scorePercent">0%</div>
+                </div>
+
+                <div class="results-stats">
+                    <div class="result-stat">
+                        <div class="result-stat-value correct" id="finalCorrect">0</div>
+                        <div class="result-stat-label">Correct</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value incorrect" id="finalIncorrect">0</div>
+                        <div class="result-stat-label">Incorrect</div>
+                    </div>
+                    <div class="result-stat">
+                        <div class="result-stat-value time" id="finalTime">0:00</div>
+                        <div class="result-stat-label">Time</div>
+                    </div>
+                </div>
+
+                <div class="results-actions">
+                    <button class="btn btn-secondary" id="reviewBtn">📋 Review Answers</button>
+                    <button class="btn btn-primary" id="retryBtn">🔄 Try Again</button>
+                    <button class="btn btn-success" id="homeBtn">🏠 Back to Topics</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== QUESTION DATABASE ====================
+        const quizData = {
+            html: {
+                name: "HTML",
+                icon: "🌐",
+                color: "#e34c26",
+                description: "Structure & semantics of web pages",
+                difficulty: "easy",
+                questions: [
+                    {
+                        question: "What does HTML stand for?",
+                        options: [
+                            "Hyper Text Markup Language",
+                            "High Tech Modern Language",
+                            "Hyper Transfer Markup Language",
+                            "Home Tool Markup Language"
+                        ],
+                        correct: 0,
+                        explanation: "HTML stands for Hyper Text Markup Language. It's the standard markup language for creating web pages."
+                    },
+                    {
+                        question: "Which tag is used to create a hyperlink?",
+                        options: ["<link>", "<a>", "<href>", "<url>"],
+                        correct: 1,
+                        explanation: "The <a> (anchor) tag is used to create hyperlinks. The href attribute specifies the link destination."
+                    },
+                    {
+                        question: "What is the correct HTML element for the largest heading?",
+                        options: ["<heading>", "<h6>", "<head>", "<h1>"],
+                        correct: 3,
+                        explanation: "The <h1> tag defines the most important heading. Heading tags range from <h1> (largest) to <h6> (smallest)."
+                    },
+                    {
+                        question: "Which attribute specifies an alternate text for an image?",
+                        options: ["title", "src", "alt", "desc"],
+                        correct: 2,
+                        explanation: "The alt attribute provides alternative text for an image if it cannot be displayed, and is important for accessibility."
+                    },
+                    {
+                        question: "What is the correct HTML for creating a text input field?",
+                        code: '<input type="___">',
+                        options: ["textfield", "input", "text", "textbox"],
+                        correct: 2,
+                        explanation: "The input element with type='text' creates a single-line text input field."
+                    },
+                    {
+                        question: "Which HTML element defines the title of a document?",
+                        options: ["<meta>", "<title>", "<head>", "<header>"],
+                        correct: 1,
+                        explanation: "The <title> element defines the title shown in the browser tab and is required in all HTML documents."
+                    },
+                    {
+                        question: "What is the correct HTML for inserting a line break?",
+                        options: ["<break>", "<lb>", "<br>", "<newline>"],
+                        correct: 2,
+                        explanation: "The <br> tag inserts a single line break. It's an empty element and doesn't have a closing tag."
+                    },
+                    {
+                        question: "Which element is used to define an unordered list?",
+                        options: ["<ol>", "<li>", "<list>", "<ul>"],
+                        correct: 3,
+                        explanation: "The <ul> tag defines an unordered (bulleted) list. Use <ol> for ordered (numbered) lists."
+                    },
+                    {
+                        question: "What does the <DOCTYPE html> declaration do?",
+                        options: [
+                            "Defines the document type and HTML version",
+                            "Creates the HTML document",
+                            "Links to an external stylesheet",
+                            "Defines the character encoding"
+                        ],
+                        correct: 0,
+                        explanation: "The DOCTYPE declaration tells the browser which version of HTML the page is written in."
+                    },
+                    {
+                        question: "Which attribute is used to specify a unique identifier for an element?",
+                        options: ["class", "name", "id", "key"],
+                        correct: 2,
+                        explanation: "The id attribute specifies a unique identifier for an HTML element. Each id must be unique within the page."
+                    }
+                ]
+            },
+            css: {
+                name: "CSS",
+                icon: "🎨",
+                color: "#264de4",
+                description: "Styling and visual presentation",
+                difficulty: "easy",
+                questions: [
+                    {
+                        question: "What does CSS stand for?",
+                        options: [
+                            "Creative Style Sheets",
+                            "Cascading Style Sheets",
+                            "Computer Style Sheets",
+                            "Colorful Style Sheets"
+                        ],
+                        correct: 1,
+                        explanation: "CSS stands for Cascading Style Sheets. The 'cascading' refers to how styles are applied in order of specificity."
+                    },
+                    {
+                        question: "Which property is used to change the background color?",
+                        options: ["bgcolor", "color", "background-color", "bg-color"],
+                        correct: 2,
+                        explanation: "The background-color property sets the background color of an element."
+                    },
+                    {
+                        question: "How do you select an element with id 'header'?",
+                        options: [".header", "#header", "header", "*header"],
+                        correct: 1,
+                        explanation: "The # symbol is used to select elements by their id. Classes use a period (.) instead."
+                    },
+                    {
+                        question: "Which property controls the text size?",
+                        options: ["text-size", "font-size", "text-style", "font-style"],
+                        correct: 1,
+                        explanation: "The font-size property sets the size of the text. Common units include px, em, rem, and %."
+                    },
+                    {
+                        question: "What is the correct CSS syntax?",
+                        options: [
+                            "{body:color=black}",
+                            "body:color=black",
+                            "body {color: black;}",
+                            "{body;color:black}"
+                        ],
+                        correct: 2,
+                        explanation: "CSS syntax consists of a selector followed by a declaration block with property-value pairs separated by colons."
+                    },
+                    {
+                        question: "How do you make text bold in CSS?",
+                        options: [
+                            "font-weight: bold",
+                            "text-style: bold",
+                            "font-style: bold",
+                            "text-weight: bold"
+                        ],
+                        correct: 0,
+                        explanation: "The font-weight property is used to set how thick or thin characters should be displayed."
+                    },
+                    {
+                        question: "Which property is used to change the font of an element?",
+                        options: ["font-style", "font-family", "font-weight", "text-font"],
+                        correct: 1,
+                        explanation: "The font-family property specifies the font for an element. You can list multiple fonts as fallbacks."
+                    },
+                    {
+                        question: "How do you center a block element horizontally?",
+                        options: [
+                            "text-align: center",
+                            "margin: auto",
+                            "align: center",
+                            "position: center"
+                        ],
+                        correct: 1,
+                        explanation: "Setting margin: auto on a block element with a defined width will center it horizontally within its container."
+                    },
+                    {
+                        question: "What is the default value of the position property?",
+                        options: ["relative", "fixed", "absolute", "static"],
+                        correct: 3,
+                        explanation: "The default position value is 'static'. Elements are positioned according to the normal document flow."
+                    },
+                    {
+                        question: "Which CSS property controls the spacing between lines of text?",
+                        options: ["spacing", "line-height", "line-spacing", "text-spacing"],
+                        correct: 1,
+                        explanation: "The line-height property specifies the height of a line of text, controlling the space between lines."
+                    }
+                ]
+            },
+            javascript: {
+                name: "JavaScript",
+                icon: "⚡",
+                color: "#f7df1e",
+                description: "Programming & interactivity",
+                difficulty: "medium",
+                questions: [
+                    {
+                        question: "Which keyword is used to declare a constant in JavaScript?",
+                        options: ["var", "let", "const", "constant"],
+                        correct: 2,
+                        explanation: "The 'const' keyword declares a block-scoped constant. Its value cannot be reassigned after initialization."
+                    },
+                    {
+                        question: "What will this code output?",
+                        code: "console.log(typeof null);",
+                        options: ["null", "undefined", "object", "number"],
+                        correct: 2,
+                        explanation: "This is a known JavaScript quirk. typeof null returns 'object', which is actually a bug that has been kept for backwards compatibility."
+                    },
+                    {
+                        question: "Which method adds an element to the end of an array?",
+                        options: ["push()", "append()", "add()", "insert()"],
+                        correct: 0,
+                        explanation: "The push() method adds one or more elements to the end of an array and returns the new length."
+                    },
+                    {
+                        question: "What is the result of: 3 + '3'?",
+                        options: ["6", "33", "NaN", "Error"],
+                        correct: 1,
+                        explanation: "JavaScript performs type coercion. When adding a number and string, the number is converted to a string, resulting in concatenation."
+                    },
+                    {
+                        question: "Which statement creates a function in JavaScript?",
+                        options: [
+                            "function = myFunc()",
+                            "function myFunc()",
+                            "create myFunc()",
+                            "def myFunc()"
+                        ],
+                        correct: 1,
+                        explanation: "Functions are declared using the 'function' keyword followed by the function name and parentheses."
+                    },
+                    {
+                        question: "What does '===' operator check?",
+                        options: [
+                            "Value only",
+                            "Type only",
+                            "Value and type",
+                            "Reference"
+                        ],
+                        correct: 2,
+                        explanation: "The strict equality operator (===) checks both value and type without type coercion, unlike == which only checks value."
+                    },
+                    {
+                        question: "What will this return?",
+                        code: "[1, 2, 3].map(x => x * 2);",
+                        options: ["[1, 2, 3]", "[2, 4, 6]", "6", "undefined"],
+                        correct: 1,
+                        explanation: "The map() method creates a new array with the results of calling the provided function on every element."
+                    },
+                    {
+                        question: "How do you write an IF statement in JavaScript?",
+                        options: [
+                            "if i = 5 then",
+                            "if (i == 5)",
+                            "if i == 5",
+                            "if i = 5"
+                        ],
+                        correct: 1,
+                        explanation: "JavaScript if statements require parentheses around the condition. The statement body follows in curly braces."
+                    },
+                    {
+                        question: "Which event occurs when the user clicks on an element?",
+                        options: ["onmouseover", "onclick", "onchange", "onmouseclick"],
+                        correct: 1,
+                        explanation: "The onclick event fires when the user clicks on an element. It's one of the most commonly used events."
+                    },
+                    {
+                        question: "What is a closure in JavaScript?",
+                        options: [
+                            "A way to close the browser",
+                            "A function with access to its outer scope",
+                            "A method to end a loop",
+                            "A type of array"
+                        ],
+                        correct: 1,
+                        explanation: "A closure is a function that has access to variables from its outer (enclosing) function's scope, even after that function has returned."
+                    }
+                ]
+            },
+            python: {
+                name: "Python",
+                icon: "🐍",
+                color: "#3776ab",
+                description: "General-purpose programming",
+                difficulty: "medium",
+                questions: [
+                    {
+                        question: "What is the correct file extension for Python files?",
+                        options: [".python", ".pt", ".py", ".pyt"],
+                        correct: 2,
+                        explanation: "Python files use the .py extension. This is recognized by Python interpreters and IDEs."
+                    },
+                    {
+                        question: "How do you create a comment in Python?",
+                        options: ["// comment", "# comment", "/* comment */", "<!-- comment -->"],
+                        correct: 1,
+                        explanation: "Python uses the hash symbol (#) for single-line comments. Multi-line strings ('''...''') are often used for documentation."
+                    },
+                    {
+                        question: "What will this code output?",
+                        code: "print(type([]))",
+                        options: ["<class 'array'>", "<class 'list'>", "<class 'tuple'>", "<class 'set'>"],
+                        correct: 1,
+                        explanation: "Square brackets [] create a list in Python. Lists are ordered, mutable sequences."
+                    },
+                    {
+                        question: "Which keyword is used to define a function?",
+                        options: ["function", "func", "def", "define"],
+                        correct: 2,
+                        explanation: "The 'def' keyword is used to define functions in Python, followed by the function name and parameters."
+                    },
+                    {
+                        question: "What is the output of: print(2 ** 3)?",
+                        options: ["6", "8", "5", "23"],
+                        correct: 1,
+                        explanation: "The ** operator performs exponentiation in Python. 2 ** 3 means 2 to the power of 3, which equals 8."
+                    },
+                    {
+                        question: "How do you create a dictionary in Python?",
+                        options: [
+                            "dict = []",
+                            "dict = ()",
+                            "dict = {}",
+                            "dict = <>"
+                        ],
+                        correct: 2,
+                        explanation: "Dictionaries are created using curly braces {} with key-value pairs. Empty braces create an empty dictionary."
+                    },
+                    {
+                        question: "What does the len() function do?",
+                        options: [
+                            "Returns the length of an object",
+                            "Lengthens a string",
+                            "Creates a list",
+                            "Loops through elements"
+                        ],
+                        correct: 0,
+                        explanation: "The len() function returns the number of items in an object, such as the length of a string or number of elements in a list."
+                    },
+                    {
+                        question: "Which method removes the last item from a list?",
+                        options: ["remove()", "delete()", "pop()", "discard()"],
+                        correct: 2,
+                        explanation: "The pop() method removes and returns the last item from a list. You can also pass an index to remove a specific item."
+                    },
+                    {
+                        question: "What is the result of: 'hello'[1]?",
+                        options: ["h", "e", "l", "Error"],
+                        correct: 1,
+                        explanation: "Python uses zero-based indexing. Index 1 refers to the second character, which is 'e' in 'hello'."
+                    },
+                    {
+                        question: "How do you start a for loop in Python?",
+                        options: [
+                            "for (i = 0; i < 5; i++)",
+                            "for i in range(5):",
+                            "foreach i in range(5)",
+                            "loop i from 0 to 5"
+                        ],
+                        correct: 1,
+                        explanation: "Python for loops use the 'for item in iterable:' syntax. range(5) generates numbers 0 through 4."
+                    }
+                ]
+            },
+            react: {
+                name: "React",
+                icon: "⚛️",
+                color: "#61dafb",
+                description: "Component-based UI library",
+                difficulty: "hard",
+                questions: [
+                    {
+                        question: "What is JSX?",
+                        options: [
+                            "A JavaScript compiler",
+                            "A syntax extension for JavaScript",
+                            "A new programming language",
+                            "A CSS framework"
+                        ],
+                        correct: 1,
+                        explanation: "JSX is a syntax extension for JavaScript that looks similar to HTML. It's used with React to describe what the UI should look like."
+                    },
+                    {
+                        question: "Which hook is used to manage state in functional components?",
+                        options: ["useEffect", "useState", "useContext", "useReducer"],
+                        correct: 1,
+                        explanation: "useState is a Hook that lets you add state to functional components. It returns an array with the current state and a function to update it."
+                    },
+                    {
+                        question: "What does useEffect do?",
+                        options: [
+                            "Manages component state",
+                            "Performs side effects in components",
+                            "Creates new components",
+                            "Handles routing"
+                        ],
+                        correct: 1,
+                        explanation: "useEffect lets you perform side effects in functional components, such as fetching data, subscriptions, or manually changing the DOM."
+                    },
+                    {
+                        question: "What is the virtual DOM?",
+                        options: [
+                            "A backup of the real DOM",
+                            "A lightweight copy of the real DOM in memory",
+                            "A new HTML standard",
+                            "A browser feature"
+                        ],
+                        correct: 1,
+                        explanation: "The virtual DOM is a lightweight JavaScript representation of the real DOM. React uses it to efficiently update only the parts of the UI that changed."
+                    },
+                    {
+                        question: "How do you pass data from parent to child component?",
+                        options: ["Using state", "Using props", "Using context", "Using refs"],
+                        correct: 1,
+                        explanation: "Props (short for properties) are used to pass data from parent to child components. They are read-only in the child component."
+                    },
+                    {
+                        question: "What is the correct way to update state based on previous state?",
+                        code: "const [count, setCount] = useState(0);",
+                        options: [
+                            "setCount(count + 1)",
+                            "setCount(prev => prev + 1)",
+                            "count = count + 1",
+                            "this.setState({count: count + 1})"
+                        ],
+                        correct: 1,
+                        explanation: "When updating state based on previous state, use the functional form of setState to ensure you're working with the most current value."
+                    },
+                    {
+                        question: "What does the key prop do in lists?",
+                        options: [
+                            "Styles the list item",
+                            "Helps React identify which items changed",
+                            "Sets the item order",
+                            "Encrypts the list data"
+                        ],
+                        correct: 1,
+                        explanation: "Keys help React identify which items have changed, been added, or removed. They should be stable, unique identifiers."
+                    },
+                    {
+                        question: "What is a React Fragment used for?",
+                        options: [
+                            "Breaking code into pieces",
+                            "Grouping elements without adding extra DOM nodes",
+                            "Creating animations",
+                            "Managing state"
+                        ],
+                        correct: 1,
+                        explanation: "Fragments let you group multiple children without adding extra nodes to the DOM. Use <></> or <React.Fragment>."
+                    },
+                    {
+                        question: "When does useEffect with an empty dependency array run?",
+                        code: "useEffect(() => { /* code */ }, []);",
+                        options: [
+                            "On every render",
+                            "Only once on mount",
+                            "Never",
+                            "When props change"
+                        ],
+                        correct: 1,
+                        explanation: "An empty dependency array tells useEffect to run only once when the component mounts, similar to componentDidMount in class components."
+                    },
+                    {
+                        question: "What is the purpose of React.memo()?",
+                        options: [
+                            "To store data",
+                            "To memoize a component and prevent unnecessary re-renders",
+                            "To create memos/notes",
+                            "To manage memory"
+                        ],
+                        correct: 1,
+                        explanation: "React.memo is a higher-order component that memoizes a component, preventing re-renders if props haven't changed."
+                    }
+                ]
+            },
+            sql: {
+                name: "SQL",
+                icon: "🗄️",
+                color: "#336791",
+                description: "Database queries & management",
+                difficulty: "medium",
+                questions: [
+                    {
+                        question: "What does SQL stand for?",
+                        options: [
+                            "Structured Question Language",
+                            "Structured Query Language",
+                            "Simple Query Language",
+                            "Standard Question Language"
+                        ],
+                        correct: 1,
+                        explanation: "SQL stands for Structured Query Language. It's the standard language for managing and manipulating relational databases."
+                    },
+                    {
+                        question: "Which statement is used to retrieve data from a database?",
+                        options: ["GET", "SELECT", "FETCH", "RETRIEVE"],
+                        correct: 1,
+                        explanation: "The SELECT statement is used to query data from one or more tables in a database."
+                    },
+                    {
+                        question: "What does the WHERE clause do?",
+                        options: [
+                            "Sorts the results",
+                            "Groups the results",
+                            "Filters the results based on conditions",
+                            "Joins tables together"
+                        ],
+                        correct: 2,
+                        explanation: "The WHERE clause filters records based on specified conditions, returning only rows that match the criteria."
+                    },
+                    {
+                        question: "Which SQL statement is used to insert new data?",
+                        options: ["ADD", "INSERT INTO", "CREATE", "UPDATE"],
+                        correct: 1,
+                        explanation: "INSERT INTO is used to insert new records into a table. You specify the table name and the values to insert."
+                    },
+                    {
+                        question: "What does the ORDER BY clause do?",
+                        options: [
+                            "Filters records",
+                            "Groups records",
+                            "Sorts records",
+                            "Limits records"
+                        ],
+                        correct: 2,
+                        explanation: "ORDER BY sorts the result set by one or more columns. Use ASC for ascending or DESC for descending order."
+                    },
+                    {
+                        question: "Which keyword removes duplicate rows from results?",
+                        options: ["UNIQUE", "DISTINCT", "DIFFERENT", "SINGLE"],
+                        correct: 1,
+                        explanation: "DISTINCT returns only unique values, eliminating duplicate rows from the result set."
+                    },
+                    {
+                        question: "What type of JOIN returns all rows when there's a match in either table?",
+                        options: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL OUTER JOIN"],
+                        correct: 3,
+                        explanation: "FULL OUTER JOIN returns all rows from both tables, with NULL values where there's no match."
+                    },
+                    {
+                        question: "Which statement modifies existing data in a table?",
+                        options: ["MODIFY", "CHANGE", "UPDATE", "ALTER"],
+                        correct: 2,
+                        explanation: "UPDATE is used to modify existing records in a table. Always use with WHERE to specify which rows to update."
+                    },
+                    {
+                        question: "What does the GROUP BY clause do?",
+                        options: [
+                            "Sorts rows into groups",
+                            "Groups rows with same values for aggregate functions",
+                            "Creates table groups",
+                            "Groups columns together"
+                        ],
+                        correct: 1,
+                        explanation: "GROUP BY groups rows that have the same values, typically used with aggregate functions like COUNT, SUM, AVG."
+                    },
+                    {
+                        question: "Which statement deletes a table from the database?",
+                        options: ["DELETE TABLE", "REMOVE TABLE", "DROP TABLE", "DESTROY TABLE"],
+                        correct: 2,
+                        explanation: "DROP TABLE permanently removes a table and all its data from the database. Use with caution!"
+                    }
+                ]
+            }
+        };
+
+        // ==================== APPLICATION STATE ====================
+        let state = {
+            user: null,
+            currentQuiz: null,
+            currentQuestionIndex: 0,
+            answers: [],
+            score: 0,
+            correctCount: 0,
+            incorrectCount: 0,
+            startTime: null,
+            timeRemaining: 600,
+            timerInterval: null,
+            leaderboard: []
+        };
+
+        // ==================== DOM ELEMENTS ====================
+        const elements = {
+            authSection: document.getElementById('authSection'),
+            categoriesSection: document.getElementById('categoriesSection'),
+            quizSection: document.getElementById('quizSection'),
+            resultsSection: document.getElementById('resultsSection'),
+            authForm: document.getElementById('authForm'),
+            username: document.getElementById('username'),
+            userInfo: document.getElementById('userInfo'),
+            displayName: document.getElementById('displayName'),
+            totalScore: document.getElementById('totalScore'),
+            categoryGrid: document.getElementById('categoryGrid'),
+            quizTitle: document.getElementById('quizTitle'),
+            quizSubtitle: document.getElementById('quizSubtitle'),
+            timer: document.getElementById('timer'),
+            progressFill: document.getElementById('progressFill'),
+            currentQ: document.getElementById('currentQ'),
+            totalQ: document.getElementById('totalQ'),
+            progressPercent: document.getElementById('progressPercent'),
+            questionNumber: document.getElementById('questionNumber'),
+            questionText: document.getElementById('questionText'),
+            codeBlock: document.getElementById('codeBlock'),
+            optionsList: document.getElementById('optionsList'),
+            explanation: document.getElementById('explanation'),
+            explanationText: document.getElementById('explanationText'),
+            correctCount: document.getElementById('correctCount'),
+            incorrectCount: document.getElementById('incorrectCount'),
+            prevBtn: document.getElementById('prevBtn'),
+            nextBtn: document.getElementById('nextBtn'),
+            quitBtn: document.getElementById('quitBtn'),
+            resultsIcon: document.getElementById('resultsIcon'),
+            resultsTitle: document.getElementById('resultsTitle'),
+            resultsSubtitle: document.getElementById('resultsSubtitle'),
+            scoreProgress: document.getElementById('scoreProgress'),
+            scorePercent: document.getElementById('scorePercent'),
+            finalCorrect: document.getElementById('finalCorrect'),
+            finalIncorrect: document.getElementById('finalIncorrect'),
+            finalTime: document.getElementById('finalTime'),
+            reviewBtn: document.getElementById('reviewBtn'),
+            retryBtn: document.getElementById('retryBtn'),
+            homeBtn: document.getElementById('homeBtn'),
+            leaderboardList: document.getElementById('leaderboardList')
+        };
+
+        // ==================== INITIALIZATION ====================
+        function init() {
+            loadState();
+            setupEventListeners();
+            renderCategories();
+            updateLeaderboard();
+
+            if (state.user) {
+                showSection('categories');
+            }
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('codeQuizState');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.user = parsed.user;
+                state.leaderboard = parsed.leaderboard || [];
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('codeQuizState', JSON.stringify({
+                user: state.user,
+                leaderboard: state.leaderboard
+            }));
+        }
+
+        function setupEventListeners() {
+            elements.authForm.addEventListener('submit', handleAuth);
+            elements.prevBtn.addEventListener('click', prevQuestion);
+            elements.nextBtn.addEventListener('click', nextQuestion);
+            elements.quitBtn.addEventListener('click', quitQuiz);
+            elements.reviewBtn.addEventListener('click', reviewAnswers);
+            elements.retryBtn.addEventListener('click', retryQuiz);
+            elements.homeBtn.addEventListener('click', () => showSection('categories'));
+        }
+
+        // ==================== AUTHENTICATION ====================
+        function handleAuth(e) {
+            e.preventDefault();
+            const name = elements.username.value.trim();
+            if (name.length >= 2) {
+                state.user = {
+                    name: name,
+                    email: document.getElementById('email').value,
+                    totalScore: 0,
+                    quizzesTaken: 0
+                };
+                saveState();
+                showSection('categories');
+            }
+        }
+
+        // ==================== SECTION MANAGEMENT ====================
+        function showSection(section) {
+            elements.authSection.classList.add('hidden');
+            elements.categoriesSection.classList.add('hidden');
+            elements.quizSection.style.display = 'none';
+            elements.resultsSection.style.display = 'none';
+
+            switch (section) {
+                case 'auth':
+                    elements.authSection.classList.remove('hidden');
+                    elements.userInfo.style.display = 'none';
+                    break;
+                case 'categories':
+                    elements.categoriesSection.classList.remove('hidden');
+                    elements.userInfo.style.display = 'flex';
+                    elements.displayName.textContent = state.user.name;
+                    elements.totalScore.textContent = state.user.totalScore;
+                    break;
+                case 'quiz':
+                    elements.quizSection.style.display = 'block';
+                    elements.userInfo.style.display = 'flex';
+                    break;
+                case 'results':
+                    elements.resultsSection.style.display = 'block';
+                    elements.userInfo.style.display = 'flex';
+                    break;
+            }
+        }
+
+        // ==================== CATEGORY RENDERING ====================
+        function renderCategories() {
+            elements.categoryGrid.innerHTML = '';
+
+            Object.entries(quizData).forEach(([key, category]) => {
+                const card = document.createElement('div');
+                card.className = 'category-card';
+                card.style.setProperty('--card-color', category.color);
+                card.innerHTML = `
+                    <div class="category-icon" style="background: ${category.color}">${category.icon}</div>
+                    <h3>${category.name}</h3>
+                    <p>${category.description}</p>
+                    <div class="category-meta">
+                        <span>${category.questions.length} questions</span>
+                        <span class="difficulty ${category.difficulty}">${category.difficulty}</span>
+                    </div>
+                `;
+                card.addEventListener('click', () => startQuiz(key));
+                elements.categoryGrid.appendChild(card);
+            });
+        }
+
+        // ==================== QUIZ LOGIC ====================
+        function startQuiz(categoryKey) {
+            const category = quizData[categoryKey];
+            state.currentQuiz = {
+                key: categoryKey,
+                ...category,
+                questions: shuffleArray([...category.questions]).slice(0, 10)
+            };
+            state.currentQuestionIndex = 0;
+            state.answers = new Array(state.currentQuiz.questions.length).fill(null);
+            state.correctCount = 0;
+            state.incorrectCount = 0;
+            state.startTime = Date.now();
+            state.timeRemaining = 600; // 10 minutes
+
+            elements.quizTitle.textContent = category.name;
+            elements.quizSubtitle.textContent = `${state.currentQuiz.questions.length} Questions • ${category.difficulty}`;
+            elements.totalQ.textContent = state.currentQuiz.questions.length;
+
+            startTimer();
+            showSection('quiz');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const question = state.currentQuiz.questions[state.currentQuestionIndex];
+            const answered = state.answers[state.currentQuestionIndex] !== null;
+
+            elements.currentQ.textContent = state.currentQuestionIndex + 1;
+            elements.questionNumber.textContent = `Question ${state.currentQuestionIndex + 1}`;
+            elements.questionText.innerHTML = escapeHtml(question.question);
+
+            // Code block
+            if (question.code) {
+                elements.codeBlock.textContent = question.code;
+                elements.codeBlock.classList.remove('hidden');
+            } else {
+                elements.codeBlock.classList.add('hidden');
+            }
+
+            // Progress
+            const progress = ((state.currentQuestionIndex + 1) / state.currentQuiz.questions.length) * 100;
+            elements.progressFill.style.width = `${progress}%`;
+            elements.progressPercent.textContent = `${Math.round(progress)}%`;
+
+            // Options
+            elements.optionsList.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+
+                if (answered) {
+                    if (index === question.correct) {
+                        optionEl.classList.add('correct');
+                    } else if (index === state.answers[state.currentQuestionIndex] && index !== question.correct) {
+                        optionEl.classList.add('incorrect');
+                    }
+                } else if (state.answers[state.currentQuestionIndex] === index) {
+                    optionEl.classList.add('selected');
+                }
+
+                optionEl.innerHTML = `
+                    <span class="option-letter">${letters[index]}</span>
+                    <span class="option-text">${escapeHtml(option)}</span>
+                `;
+
+                if (!answered) {
+                    optionEl.addEventListener('click', () => selectOption(index));
+                }
+
+                elements.optionsList.appendChild(optionEl);
+            });
+
+            // Explanation
+            if (answered) {
+                elements.explanationText.textContent = question.explanation;
+                elements.explanation.classList.add('show');
+            } else {
+                elements.explanation.classList.remove('show');
+            }
+
+            // Navigation buttons
+            elements.prevBtn.disabled = state.currentQuestionIndex === 0;
+            
+            if (state.currentQuestionIndex === state.currentQuiz.questions.length - 1) {
+                elements.nextBtn.textContent = answered ? 'Finish Quiz' : 'Next →';
+            } else {
+                elements.nextBtn.textContent = 'Next →';
+            }
+
+            // Stats
+            elements.correctCount.textContent = state.correctCount;
+            elements.incorrectCount.textContent = state.incorrectCount;
+        }
+
+        function selectOption(index) {
+            if (state.answers[state.currentQuestionIndex] !== null) return;
+
+            const question = state.currentQuiz.questions[state.currentQuestionIndex];
+            state.answers[state.currentQuestionIndex] = index;
+
+            if (index === question.correct) {
+                state.correctCount++;
+            } else {
+                state.incorrectCount++;
+            }
+
+            renderQuestion();
+        }
+
+        function prevQuestion() {
+            if (state.currentQuestionIndex > 0) {
+                state.currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (state.answers[state.currentQuestionIndex] === null) {
+                // Auto-select nothing and show warning
+                alert('Please select an answer before continuing.');
+                return;
+            }
+
+            if (state.currentQuestionIndex < state.currentQuiz.questions.length - 1) {
+                state.currentQuestionIndex++;
+                renderQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function quitQuiz() {
+            if (confirm('Are you sure you want to quit? Your progress will be lost.')) {
+                stopTimer();
+                showSection('categories');
+            }
+        }
+
+        // ==================== TIMER ====================
+        function startTimer() {
+            stopTimer();
+            updateTimerDisplay();
+            state.timerInterval = setInterval(() => {
+                state.timeRemaining--;
+                updateTimerDisplay();
+
+                if (state.timeRemaining <= 0) {
+                    finishQuiz();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (state.timerInterval) {
+                clearInterval(state.timerInterval);
+                state.timerInterval = null;
+            }
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(state.timeRemaining / 60);
+            const seconds = state.timeRemaining % 60;
+            elements.timer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            elements.timer.classList.remove('warning', 'danger');
+            if (state.timeRemaining <= 60) {
+                elements.timer.classList.add('danger');
+            } else if (state.timeRemaining <= 180) {
+                elements.timer.classList.add('warning');
+            }
+        }
+
+        // ==================== RESULTS ====================
+        function finishQuiz() {
+            stopTimer();
+
+            const totalQuestions = state.currentQuiz.questions.length;
+            const percentage = Math.round((state.correctCount / totalQuestions) * 100);
+            const timeTaken = Math.round((Date.now() - state.startTime) / 1000);
+            const minutes = Math.floor(timeTaken / 60);
+            const seconds = timeTaken % 60;
+
+            // Update user score
+            const scoreGained = state.correctCount * 10;
+            state.user.totalScore += scoreGained;
+            state.user.quizzesTaken++;
+
+            // Update leaderboard
+            updateLeaderboardEntry(state.user.name, state.user.totalScore);
+            saveState();
+
+            // Set results UI
+            if (percentage >= 80) {
+                elements.resultsIcon.textContent = '🎉';
+                elements.resultsIcon.className = 'results-icon excellent';
+                elements.resultsTitle.textContent = 'Excellent!';
+                elements.resultsSubtitle.textContent = 'You\'re a coding master!';
+            } else if (percentage >= 60) {
+                elements.resultsIcon.textContent = '👍';
+                elements.resultsIcon.className = 'results-icon good';
+                elements.resultsTitle.textContent = 'Good Job!';
+                elements.resultsSubtitle.textContent = 'Keep up the great work!';
+            } else if (percentage >= 40) {
+                elements.resultsIcon.textContent = '📚';
+                elements.resultsIcon.className = 'results-icon needs-work';
+                elements.resultsTitle.textContent = 'Keep Learning!';
+                elements.resultsSubtitle.textContent = 'Practice makes perfect!';
+            } else {
+                elements.resultsIcon.textContent = '💪';
+                elements.resultsIcon.className = 'results-icon poor';
+                elements.resultsTitle.textContent = 'Don\'t Give Up!';
+                elements.resultsSubtitle.textContent = 'Review the material and try again!';
+            }
+
+            elements.finalCorrect.textContent = state.correctCount;
+            elements.finalIncorrect.textContent = totalQuestions - state.correctCount;
+            elements.finalTime.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            elements.scorePercent.textContent = `${percentage}%`;
+            elements.totalScore.textContent = state.user.totalScore;
+
+            // Animate score circle
+            const circumference = 2 * Math.PI * 65;
+            const offset = circumference - (percentage / 100) * circumference;
+            setTimeout(() => {
+                elements.scoreProgress.style.strokeDashoffset = offset;
+            }, 100);
+
+            showSection('results');
+            updateLeaderboard();
+        }
+
+        function reviewAnswers() {
+            state.currentQuestionIndex = 0;
+            showSection('quiz');
+            renderQuestion();
+        }
+
+        function retryQuiz() {
+            startQuiz(state.currentQuiz.key);
+        }
+
+        // ==================== LEADERBOARD ====================
+        function updateLeaderboardEntry(name, score) {
+            const existingIndex = state.leaderboard.findIndex(e => e.name === name);
+            if (existingIndex >= 0) {
+                state.leaderboard[existingIndex].score = score;
+            } else {
+                state.leaderboard.push({ name, score });
+            }
+            state.leaderboard.sort((a, b) => b.score - a.score);
+            state.leaderboard = state.leaderboard.slice(0, 10);
+        }
+
+        function updateLeaderboard() {
+            elements.leaderboardList.innerHTML = '';
+
+            if (state.leaderboard.length === 0) {
+                elements.leaderboardList.innerHTML = '<li style="color: var(--text-muted); text-align: center; padding: 1rem;">No scores yet. Be the first!</li>';
+                return;
+            }
+
+            state.leaderboard.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.className = 'leaderboard-item';
+
+                let rankClass = 'normal';
+                if (index === 0) rankClass = 'gold';
+                else if (index === 1) rankClass = 'silver';
+                else if (index === 2) rankClass = 'bronze';
+
+                li.innerHTML = `
+                    <span class="rank ${rankClass}">${index + 1}</span>
+                    <span class="leaderboard-name">${escapeHtml(entry.name)}</span>
+                    <span class="leaderboard-score">${entry.score} pts</span>
+                `;
+                elements.leaderboardList.appendChild(li);
+            });
+        }
+
+        // ==================== UTILITIES ====================
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ==================== START APP ====================
+        init();
+    </script>
+</body>
+</html>
